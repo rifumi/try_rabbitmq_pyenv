@@ -1,0 +1,36 @@
+services:
+  rabbitmq-srv:
+    image: rabbitmq
+    container_name: rabbitmq-srv
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    hostname: ${RABBITMQ_DEFAULT_HOST}
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    networks:
+      - my-network
+
+  python-dev:
+    build: ./app
+    container_name: python-dev
+    depends_on:
+      - rabbitmq-srv
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST}
+      - RABBITMQ_DEFAULT_HOST=${RABBITMQ_DEFAULT_HOST}
+      - RABBITMQ_PORT=5672
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    networks:
+      - my-network
+
+networks:
+  my-network:
