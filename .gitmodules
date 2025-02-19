@@ -1,0 +1,3 @@
+[submodule "app/try_rabbitmq"]
+	path = app/try_rabbitmq
+	url = https://github.com/rifumi/try_rabbitmq.git
